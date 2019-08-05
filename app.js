@@ -8,6 +8,15 @@ var app = express();
 
 app.use(morgan('tiny'));
 
+// Saying I am setting up a static directory that I am going to use for static files (CSS and JS)
+// This means everything in public is accessible to the outside world
+app.use(express.static(path.join(__dirname, '/public/')))
+
+// If you can't find the CSS/ JS file you are looking for in the public directory then look in the nodemodules
+app.use('/css', express.static(path.join(__dirname,'/node_modules/bootstrap/dist/css/')))
+app.use('/js', express.static(path.join(__dirname,'/node_modules/bootstrap/dist/js/')))
+app.use('/js', express.static(path.join(__dirname,'/node_modules/jquery/dist/')))
+
 app.get('/', function(req,res){
     res.sendFile(path.join(__dirname,'views/index.html'));
 })
