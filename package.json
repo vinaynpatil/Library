@@ -19,7 +19,7 @@
   },
   "homepage": "https://github.com/vinaynpatil/Library#readme",
   "dependencies": {
-    "bootstrap": "3.2.0",
+    "bootstrap": "3.4.1",
     "chalk": "2.4.2",
     "debug": "4.1.1",
     "ejs": "2.6.2",
