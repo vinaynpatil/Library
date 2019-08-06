@@ -25,7 +25,7 @@ app.set('views', './src/views/');
 app.set('view engine', 'pug');
 
 app.get('/', (req, res) => {
-  res.render('index');
+  res.render('index', { list: ['Book1', 'Book2'] });
 });
 
 app.listen(port, () => {
