@@ -2,20 +2,39 @@ const express = require('express');
 
 const bookRouter = express.Router();
 
+const { MongoClient, ObjectID } = require('mongodb');
+
+const debug = require('debug')('app:bookRoutes');
+
 // Same instance from app.js is used
 const sql = require('mssql');
 
 function router(nav) {
   bookRouter.route('/')
     .get((req, res) => {
-      (async function query() {
-        const request = new sql.Request();
-        const { recordset } = await request.query('select * from books');
-        res.render('bookListView', {
-          nav,
-          title: 'Library',
-          books: recordset
-        });
+      const url = 'mongodb://localhost:27017';
+      const dbName = 'libraryApp';
+
+      (async function mongo() {
+        let client;
+        try {
+          client = await MongoClient.connect(url);
+          debug('Connected to the server');
+          const db = client.db(dbName);
+
+          const col = await db.collection('books');
+
+          const books = await col.find().toArray();
+
+          res.render('bookListView', {
+            nav,
+            title: 'Library',
+            books
+          });
+        } catch (err) {
+          debug(err);
+        }
+        client.close();
       }());
     });
 
@@ -23,14 +42,29 @@ function router(nav) {
   bookRouter.route('/:id')
     .all((req, res, next) => {
       const { id } = req.params;
-      (async function query() {
-        const request = new sql.Request();
-        // const result = await request.query(`select * from books where id=${id}`);
-        const { recordset } = await request
-          .input('id', sql.Int, id)
-          .query('select * from books where id=@id');
-        // Array destructuring - req.book = recordset[0]
-        [req.book] = recordset;
+      const url = 'mongodb://localhost:27017';
+      const dbName = 'libraryApp';
+
+      (async function mongo() {
+
+        let client;
+        try {
+          client = await MongoClient.connect(url);
+          debug('Connected to the server');
+          const db = client.db(dbName);
+
+          const col = await db.collection('books');
+
+          // Can't directly use {_id: id}, since _id is an object id and not a string id
+          const book = await col.findOne({ _id: new ObjectID(id) });
+
+          debug(book);
+
+          req.book = book;
+        } catch (err) {
+          debug(err);
+        }
+        client.close();
         next();
       }());
     })
