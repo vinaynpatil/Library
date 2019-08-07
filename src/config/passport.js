@@ -1,6 +1,6 @@
 const passport = require('passport');
 
-require('./strategies/local.strategy');
+require('./strategies/local.strategy')();
 
 module.exports = function passportConfig(app) {
   // This creates things like login on the request

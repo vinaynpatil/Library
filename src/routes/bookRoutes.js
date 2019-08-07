@@ -6,10 +6,15 @@ const { MongoClient, ObjectID } = require('mongodb');
 
 const debug = require('debug')('app:bookRoutes');
 
-// Same instance from app.js is used
-const sql = require('mssql');
-
 function router(nav) {
+  // Route protection
+  bookRouter.use((req, res, next) => {
+    if (req.user) {
+      next();
+    } else {
+      res.redirect('/');
+    }
+  });
   bookRouter.route('/')
     .get((req, res) => {
       const url = 'mongodb://localhost:27017';

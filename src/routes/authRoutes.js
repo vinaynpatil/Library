@@ -6,7 +6,9 @@ const debug = require('debug')('app:authRoutes');
 
 const authRouter = express.Router();
 
-function router() {
+const passport = require('passport');
+
+function router(nav) {
   authRouter.route('/signUp')
     .post((req, res) => {
       const { username, password } = req.body;
@@ -35,11 +37,34 @@ function router() {
         }
         client.close();
       }());
-
-
     });
 
+  authRouter.route('/signin')
+    .get((req, res) => {
+      res.render('signin', {
+        nav,
+        title: 'Sign In'
+      });
+    })
+    // We don't care about what you are posting, passport deals with it
+    // (So we will be posting to passport)
+    // Passport authenticate will deal with it
+    // Here local can be changed to google or facebook based on the requirement
+    .post(passport.authenticate('local', {
+      successRedirect: '/auth/profile',
+      failureRedirect: '/'
+    }));
+
   authRouter.route('/profile')
+    .all((req, res, next) => {
+      // Route protection
+      // (Passport doesn't put the user object within the request if the user is not signed in)
+      if (req.user) {
+        next();
+      } else {
+        res.redirect('/');
+      }
+    })
     .get((req, res) => {
       res.send(req.user);
     });
