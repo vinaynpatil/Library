@@ -59,6 +59,7 @@ function router(nav) {
     .all((req, res, next) => {
       // Route protection
       // (Passport doesn't put the user object within the request if the user is not signed in)
+      // Similarly roles can be used to filter the protection
       if (req.user) {
         next();
       } else {
