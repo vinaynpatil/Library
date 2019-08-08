@@ -2,7 +2,7 @@ const { MongoClient, ObjectID } = require('mongodb');
 
 const debug = require('debug')('app:bookController');
 
-function bookController(nav) {
+function bookController(bookService, nav) {
   function getIndex(req, res) {
     const url = 'mongodb://localhost:27017';
     const dbName = 'libraryApp';
@@ -48,6 +48,14 @@ function bookController(nav) {
         const book = await col.findOne({ _id: new ObjectID(id) });
 
         debug(book);
+        if (book.bookId) {
+          book.details = await bookService.getBookById(book.bookId);
+        }
+        else {
+          book.details = {};
+          book.details.description = 'No description available!';
+          book.details.image_url = '';
+        }
 
         res.render('bookView', {
           nav,

@@ -2,10 +2,12 @@ const express = require('express');
 
 const bookRouter = express.Router();
 
+const bookService = require('../services/goodreadsService')();
+
 const bookController = require('../controllers/bookController');
 
 function router(nav) {
-  const { getIndex, getById, middleware } = bookController(nav);
+  const { getIndex, getById, middleware } = bookController(bookService, nav);
   // Route protection
   bookRouter.use(middleware);
   bookRouter.route('/')

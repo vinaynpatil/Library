@@ -30,7 +30,7 @@ function router(nav) {
           const results = await col.insertOne(user);
 
           req.login(results.ops[0], () => {
-            res.redirect('/auth/profile');
+            res.redirect('/books');
           });
         } catch (err) {
           debug(err);
@@ -51,7 +51,7 @@ function router(nav) {
     // Passport authenticate will deal with it
     // Here local can be changed to google or facebook based on the requirement
     .post(passport.authenticate('local', {
-      successRedirect: '/auth/profile',
+      successRedirect: '/books',
       failureRedirect: '/'
     }));
 
