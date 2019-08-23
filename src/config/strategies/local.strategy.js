@@ -21,11 +21,11 @@ module.exports = function localStrategy() {
       let client;
       try {
         client = await MongoClient.connect(url);
-        debug('Connected to the server')
+        debug('Connected to the server');
         const db = client.db(dbName);
         const col = await db.collection('users');
         const user = await col.findOne({ username });
-        if (user.password === password) {
+        if (user && user.password === password) {
           done(null, user);
         } else {
           done(null);
